@@ -9,7 +9,9 @@
 (defn subscribed? [user-id feed]
   (and (feed? feed) ((@subscriptions feed) user-id)))
 
-(defn update-subscriptions [feed f]
+(defn update-subscriptions
+  "Apply the function f to the set of subscriptions for the given feed."
+  [feed f]
   (let [update-feed (fn [x g] (update x feed g))]
     (dosync (alter subscriptions update-feed f))))
 
