@@ -9,9 +9,8 @@
 (def fake-feed "dckx")
 
 (defn set-mock-feeds [f]
-  (dosync (ref-set feeds {"xkcd" nil}))
-  (f)
-  (dosync (ref-set feeds {})))
+  (alter-var-root (var feeds) (fn [_] {real-feed nil}))
+  (f))
 
 (defn set-mock-users [f]
   (dosync (ref-set subscriptions {real-feed #{subscribed-user}}))

@@ -1,10 +1,10 @@
 (ns clomic.core)
 
 (def subscriptions (ref {}))
-(def feeds (ref {}))
+(def feeds {})
 
 (defn feed? [feed]
-  (contains? @feeds feed))
+  (contains? feeds feed))
 
 (defn subscribed? [user-id feed]
   (and (feed? feed) (contains? (@subscriptions feed) user-id)))
