@@ -1,0 +1,7 @@
+feeds:
+  xkcd:
+    url: xkcd-url
+    parser: xkcd_parser
+  not-xkcd:
+    url: not-xkcd-url
+    parser: not_xkcd_parser

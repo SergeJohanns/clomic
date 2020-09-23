@@ -1,0 +1,4 @@
+feeds:
+  xkcd:
+    url: xkcd-url
+    parser: this-is-not-a-real-parser-name
