@@ -7,7 +7,9 @@
            javax.naming.ConfigurationException))
 
 (def parser-function 'parser)
-(def root (System/getProperty "user.home"))
+(def root (str (System/getProperty "user.home")
+               File/separator ".config"
+               File/separator "clomic"))
 (def config (str root File/separator "config.yaml"))
 (def feeds (str root File/separator "feeds"))
 (def subscriptions (str root File/separator "subscriptions.clj"))
