@@ -6,19 +6,24 @@
            java.io.FileNotFoundException
            javax.naming.ConfigurationException))
 
+(def parser-function 'parser)
 (def root (System/getProperty "user.home"))
 (def config (str root File/separator "config.yaml"))
 (def feeds (str root File/separator "feeds"))
 (def subscriptions (str root File/separator "subscriptions.clj"))
 
 (defn resolve-parser
-  "Construct the parser function corresponding to the `feed`."
+  "Construct the parser function corresponding to the `feed`. Prioritise user
+  config files over builtin resources."
   [feed]
-  (let [file-path (str feeds File/separator feed ".clj")]
-    (if (.exists (io/file file-path))
-      (read-string (slurp file-path))
-      (throw (FileNotFoundException.
-              (str "Could not find the feed parser file '" file-path "'"))))))
+  (let [name (str feed ".clj") path (str feeds File/separator name)]
+    (cond
+      (.exists (io/file path)) (load-file path)
+      (io/resource name) (load-string (slurp (io/resource name)))
+      :else (throw (FileNotFoundException.
+             (str "Could not find the feed parser file '" path "'"))))
+    ;; Parser function has been set by the parser library
+    (resolve parser-function)))
 
 (defn read-feeds
   "Read the content feeds and their respective parser functions into a map.
