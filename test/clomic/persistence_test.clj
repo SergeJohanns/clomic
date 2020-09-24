@@ -11,6 +11,8 @@
 (def config-missing-parser (io/resource "config-missing.yaml"))
 (def test-subscriptions-file (io/resource "subscriptions.clj"))
 (def missing-subscriptions-file "test_subscriptions.clj")
+(defn missing-subscriptions [] ;; Not a var, since p/root may change.
+  (str p/root File/separator missing-subscriptions-file))
 (def test-subscriptions {:xkcd #{0 42} :not-xkcd #{5 41}})
 (def other-test-subscriptions {:other-xkcd #{1 41} :different-xkcd #{2 40}})
 
@@ -39,11 +41,9 @@
 (use-fixtures :once change-root make-parsers)
 
 (defn prepare-subscription-file [f]
-  (let [missing-subs (str p/root File/separator missing-subscriptions-file)]
-    (def missing-subscriptions missing-subs)
-    (f)
-    (if (.exists (io/file missing-subscriptions))
-      (io/delete-file missing-subscriptions))))
+  (f)
+  (if (.exists (io/file (missing-subscriptions)))
+    (io/delete-file (missing-subscriptions))))
 
 (use-fixtures :each prepare-subscription-file)
 
@@ -56,12 +56,12 @@
 
 (deftest test-read-subscriptions
   (testing "Is empty when the file is missing."
-    (is (= {} (p/read-subscriptions missing-subscriptions))))
+    (is (= {} (p/read-subscriptions (missing-subscriptions)))))
   (testing "Read subscriptions from persistent storage."
     (is (= test-subscriptions (p/read-subscriptions test-subscriptions-file)))))
 
 (deftest test-write-subscriptions
   (testing "Write subscriptions to persistent storage."
-    (is (= {} (p/read-subscriptions missing-subscriptions)))
-    (p/write-subscriptions missing-subscriptions other-test-subscriptions)
-    (is (= other-test-subscriptions (p/read-subscriptions missing-subscriptions)))))
+    (is (= {} (p/read-subscriptions (missing-subscriptions))))
+    (p/write-subscriptions (missing-subscriptions) other-test-subscriptions)
+    (is (= other-test-subscriptions (p/read-subscriptions (missing-subscriptions))))))
