@@ -11,14 +11,14 @@
                File/separator ".config"
                File/separator "clomic"))
 (def config (str root File/separator "config.yaml"))
-(def feeds (str root File/separator "feeds"))
+(def parsers (str root File/separator "parsers"))
 (def subscriptions (str root File/separator "subscriptions.clj"))
 
 (defn resolve-parser
   "Construct the parser function corresponding to the `feed`. Prioritise user
   config files over builtin resources."
   [feed]
-  (let [name (str feed ".clj") path (str feeds File/separator name)]
+  (let [name (str feed ".clj") path (str parsers File/separator name)]
     (cond
       (.exists (io/file path)) (load-file path)
       (io/resource name) (load-string (slurp (io/resource name)))
