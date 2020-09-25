@@ -29,11 +29,11 @@
    (var p/root)
    (fn [_] (str (System/getProperty "user.home") File/separator ".clomic-test")))
   (f)
-  (delete-file-recursively p/feeds))
+  (delete-file-recursively p/parsers))
 
 (defn make-parsers [f]
   (doseq [file-name parser-names
-          :let [test-file (str p/feeds File/separator file-name)]]
+          :let [test-file (str p/parsers File/separator file-name)]]
     (io/make-parents test-file)
     (spit test-file (slurp (io/resource file-name))))
   (f))
