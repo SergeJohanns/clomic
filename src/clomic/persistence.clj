@@ -25,7 +25,10 @@
       :else (throw (FileNotFoundException.
              (str "Could not find the feed parser file '" path "'"))))
     ;; Parser function has been set by the parser library
-    (resolve parser-function)))
+    ;; Unmap it so it doesn't override the next library
+    (let [parser-instance (resolve parser-function)]
+      (ns-unmap *ns* parser-function)
+      parser-instance)))
 
 (defn read-feeds
   "Read the content feeds and their respective parser functions into a map.

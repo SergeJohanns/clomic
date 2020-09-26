@@ -9,8 +9,6 @@
 
 (def config (io/resource "config.yaml"))
 (def config-feeds #{:xkcd :not-xkcd})
-(def parser-names ["xkcd_parser.clj" "not_xkcd_parser.clj"])
-(def config-missing-parser (io/resource "config-missing.yaml"))
 (def test-subscriptions-file (io/resource "subscriptions.clj"))
 (def missing-subscriptions-file "test_subscriptions.clj")
 (defn missing-subscriptions [] ;; Not a var, since p/root may change.
@@ -18,11 +16,20 @@
 (def test-subscriptions {:xkcd #{0 42} :not-xkcd #{5 41}})
 (def other-test-subscriptions {:other-xkcd #{1 41} :different-xkcd #{2 40}})
 
+(def parser-names [["xkcd_parser.clj" "xkcd_parser.clj"]
+                   ["not_xkcd_parser.clj" "not_xkcd_parser.clj"]
+                   ["dummy_config.clj" "dummy.clj"]])
+(def config-missing-parser (io/resource "config-missing.yaml"))
 (def xkcd-atom-feed (io/resource "xkcd-atom.xml"))
 (def xkcd-atom-feed-result
   (edn/read-string (slurp (io/resource "xkcd_atom_result.clj"))))
 (def resource-xkcd-parser (atom nil))
 (def config-xkcd-parser (atom nil))
+;; Both dummy parsers have the same name, to test precedence.
+(def resource-dummy-parser (atom nil))
+(def config-dummy-parser (atom nil))
+(def config-dummy-result "Config dummy")
+
 (defn delete-file-recursively
   "Delete `file` and, if it is a directory, delete all contained files and
   subdirectories as well. This function is not safe in general, because the JVM
@@ -42,8 +49,8 @@
   (delete-file-recursively p/parsers))
 
 (defn make-parsers [f]
-  (doseq [file-name parser-names
-          :let [test-file (str p/parsers File/separator file-name)]]
+  (doseq [[file-name new-name] parser-names
+          :let [test-file (str p/parsers File/separator new-name)]]
     (io/make-parents test-file)
     (spit test-file (slurp (io/resource file-name))))
   (f))
@@ -51,6 +58,8 @@
 (defn prepare-parsers [f]
   (reset! resource-xkcd-parser (p/resolve-parser "resource_xkcd_atom_parser"))
   (reset! config-xkcd-parser (p/resolve-parser "config_xkcd_atom_parser"))
+  (reset! resource-dummy-parser (p/resolve-parser "dummy_resource"))
+  (reset! config-dummy-parser (p/resolve-parser "dummy_config"))
   (f))
 
 (use-fixtures :once change-root make-parsers prepare-parsers)
@@ -80,6 +89,10 @@
     (is (= {} (p/read-subscriptions (missing-subscriptions))))
     (p/write-subscriptions (missing-subscriptions) other-test-subscriptions)
     (is (= other-test-subscriptions (p/read-subscriptions (missing-subscriptions))))))
+
+(deftest test-resolve-parser
+  (testing "Prioritise config parsers over resource parsers."
+    (is (= config-dummy-result (@config-dummy-parser xkcd-atom-feed)))))
 
 (defn all-submaps? [as bs]
   (every? (fn [[a b]] (s/subset? (set a) (set b))) (map vector as bs)))
