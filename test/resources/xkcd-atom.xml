@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>xkcd.com</title>
+    <link href="https://xkcd.com/" rel="alternate"></link>
+    <id>https://xkcd.com/</id>
+    <updated>2020-09-23T00:00:00Z</updated>
+    <entry>
+        <title>Message Boards</title>
+        <link href="https://xkcd.com/2363/" rel="alternate"></link>
+        <updated>2020-09-23T00:00:00Z</updated>
+        <id>https://xkcd.com/2363/</id>
+        <summary type="html">&lt;img src="https://imgs.xkcd.com/comics/message_boards.png" title="alt-text omitted to avoid copyright infringement" alt="alt-text omitted to avoid copyright infringement" /&gt;</summary>
+    </entry>
+    <entry>
+        <title>Volcano Dinosaur</title>
+        <link href="https://xkcd.com/2362/" rel="alternate"></link>
+        <updated>2020-09-21T00:00:00Z</updated>
+        <id>https://xkcd.com/2362/</id>
+        <summary type="html">&lt;img src="https://imgs.xkcd.com/comics/volcano_dinosaur.png" title="alt-text omitted to avoid copyright infringement" alt="alt-text omitted to avoid copyright infringement" /&gt;</summary>
+    </entry>
+    <entry>
+        <title>Voting</title>
+        <link href="https://xkcd.com/2361/" rel="alternate"></link>
+        <updated>2020-09-18T00:00:00Z</updated>
+        <id>https://xkcd.com/2361/</id>
+        <summary type="html">&lt;img src="https://imgs.xkcd.com/comics/voting.png" title="alt-text omitted to avoid copyright infringement" alt="alt-text omitted to avoid copyright infringement" /&gt;</summary>
+    </entry>
+    <entry>
+        <title>Common Star Types</title>
+        <link href="https://xkcd.com/2360/" rel="alternate"></link>
+        <updated>2020-09-16T00:00:00Z</updated>
+        <id>https://xkcd.com/2360/</id>
+        <summary type="html">&lt;img src="https://imgs.xkcd.com/comics/common_star_types.png" title="alt-text omitted to avoid copyright infringement" alt="alt-text omitted to avoid copyright infringement" /&gt;</summary>
+    </entry>
+</feed>
