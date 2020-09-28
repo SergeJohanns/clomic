@@ -10,4 +10,5 @@ A telegram bot that automatically sends you new issues of webcomics you follow.
 
 Copyright © 2020 Serge Johanns
 
-Distributed under the Eclipse Public License either version 1.0 or (at
+Distributed under the Eclipse Public License either version 2.0 or (at
+your option) any later version.
