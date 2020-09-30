@@ -8,5 +8,6 @@
                  [org.clojars.scsibug/feedparser-clj "0.4.0"]
                  [morse "0.4.3"]
                  [environ "1.2.0"]]
+  :main clomic.main
   :profiles {:dev {:resource-paths ["test/resources"]}}
   :repl-options {:init-ns clomic.core})
