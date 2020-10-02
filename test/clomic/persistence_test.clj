@@ -15,6 +15,12 @@
   (str p/root File/separator missing-subscriptions-file))
 (def test-subscriptions {:xkcd #{0 42} :not-xkcd #{5 41}})
 (def other-test-subscriptions {:other-xkcd #{1 41} :different-xkcd #{2 40}})
+(def test-timestamp-file (io/resource "timestamp.clj"))
+(def test-timestamp #inst "2020-01-02T03:04:05Z")
+(def other-test-timestamp #inst "2020-05-04T03:02:01Z")
+(def missing-timestamp-file "test_timestamp.clj")
+(defn missing-timestamp []
+  (str p/root File/separator missing-timestamp-file))
 
 (def parser-names [["xkcd_parser.clj" "xkcd_parser.clj"]
                    ["not_xkcd_parser.clj" "not_xkcd_parser.clj"]
@@ -45,6 +51,8 @@
   (alter-var-root (var p/parsers) (fn [_] (str p/root File/separator "parsers")))
   (alter-var-root (var p/subscriptions)
                   (fn [_] (str p/root File/separator "subscriptions.clj")))
+  (alter-var-root (var p/timestamp)
+                  (fn [_] (str p/root File/separator "timestamp.clj")))
   (f)
   (delete-file-recursively p/parsers))
 
@@ -69,7 +77,12 @@
   (if (.exists (io/file (missing-subscriptions)))
     (io/delete-file (missing-subscriptions))))
 
-(use-fixtures :each prepare-subscription-file)
+(defn prepare-timestamp-file [f]
+  (f)
+  (if (.exists (io/file (missing-timestamp)))
+    (io/delete-file (missing-timestamp))))
+
+(use-fixtures :each prepare-subscription-file prepare-timestamp-file)
 
 (deftest test-read-feeds
   (testing "Read feeds when all fields are provided."
@@ -89,6 +102,18 @@
     (is (= {} (p/read-subscriptions (missing-subscriptions))))
     (p/write-subscriptions (missing-subscriptions) other-test-subscriptions)
     (is (= other-test-subscriptions (p/read-subscriptions (missing-subscriptions))))))
+
+(deftest test-read-timestamp
+  (testing "Is 70/1/1 when the file is missing."
+    (is (= #inst "1970-01-01T00:00:00Z" (p/read-timestamp (missing-timestamp)))))
+  (testing "Read timestamp from persistent storage."
+    (is (= test-timestamp (p/read-timestamp test-timestamp-file)))))
+
+(deftest test-write-timestamp
+  (testing "Write timestamp to persistent storage."
+    (is (= #inst "1970-01-01T00:00:00Z" (p/read-timestamp (missing-timestamp))))
+    (p/write-timestamp (missing-timestamp) other-test-timestamp)
+    (is (= other-test-timestamp (p/read-timestamp (missing-timestamp))))))
 
 (deftest test-resolve-parser
   (testing "Prioritise config parsers over resource parsers."

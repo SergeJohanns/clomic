@@ -13,6 +13,7 @@
 (def config (str root File/separator "config.yaml"))
 (def parsers (str root File/separator "parsers"))
 (def subscriptions (str root File/separator "subscriptions.clj"))
+(def timestamp (str root File/separator "timestamp.clj"))
 
 (defn resolve-parser
   "Construct the parser function corresponding to the `feed`. Prioritise user
@@ -61,3 +62,18 @@
   ([subscriptions-file data]
    (io/make-parents subscriptions-file)
    (spit subscriptions-file (pr-str data))))
+
+(defn read-timestamp
+  "Read the time of the last content update from persistent storage. Optionally
+  take the path of a `timestamp-file` to override the default."
+  ([] (read-timestamp timestamp))
+  ([timestamp-file]
+   (if (.exists (io/file timestamp-file))
+     (edn/read-string (slurp timestamp-file))
+     #inst "1970-01-01T00:00:00Z")))
+
+(defn write-timestamp
+  "Write the given `time` to persistent storage. Optionally take the path of a
+  `timestamp-file` to override the default."
+  ([time] (write-timestamp timestamp time))
+  ([timestamp-file time] (spit timestamp-file (pr-str time))))
