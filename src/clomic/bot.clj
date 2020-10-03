@@ -49,4 +49,7 @@
                    (send id (format not-a-feed-response feed)))))))
 
 (defn start-bot []
-  (<!! (p/start token telegram-bot)))
+  (p/start token telegram-bot))
+
+(defn send-content [{image :image alt-text :alt-text} user]
+  (a/send-photo token user {:caption alt-text} image))
